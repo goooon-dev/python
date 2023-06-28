@@ -6,16 +6,18 @@ from tqdm import tqdm
 
 def check_url(url):
     try:
-        response = requests.get(url, allow_redirects=True, timeout=5)
+        response = requests.get(url, allow_redirects=True, timeout=10)
         # 404の場合は専用ページがある場合があるので除外
         if response.status_code != 404:
             response.raise_for_status()
     except (requests.HTTPError, requests.ConnectionError, requests.Timeout) as e:
         print(f"Broken link at {url}")
         return "Broken", "N/A", "N/A", url
-    
+
     soup = BeautifulSoup(response.content, 'html.parser')
     title = soup.title.text if soup.title else ""
+    print("title")
+    print(title)
     # ステータスコードの取得
     status_code = response.status_code
 
@@ -33,8 +35,13 @@ def check_url(url):
         redirect_check = "有"
     else:
         redirect_check = "無"
-        
-    return url, redirect_check, title_check, status_code, final_url
+
+    if title:
+        unnecessary_url = "-"
+    else:
+        unnecessary_url = "不要？なURL"
+     
+    return url, redirect_check, title_check, status_code, final_url, unnecessary_url
 
 # ファイルからURLを読み込む
 with open('urls.txt', 'r') as file:
@@ -44,7 +51,7 @@ with open('urls.txt', 'r') as file:
 with open('results.csv', 'w', newline='') as file:
     writer = csv.writer(file)
     # ヘッダーを書き込む
-    writer.writerow(["URL", "リダイレクト", "404ページ", "Status Code", "Final URL"])
+    writer.writerow(["URL", "リダイレクト", "404ページ", "ステータスコード", "リダイレクト先URL", "不要？なURL"])
     
     # 各URLに対してチェックを行う
     for url in tqdm(urls):
