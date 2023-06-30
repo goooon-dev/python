@@ -16,8 +16,6 @@ def check_url(url):
 
     soup = BeautifulSoup(response.content, 'html.parser')
     title = soup.title.text if soup.title else ""
-    print("title")
-    print(title)
     # ステータスコードの取得
     status_code = response.status_code
 
