@@ -11,3 +11,8 @@ pip install -r requirements.txt
 ## 実行
 - python CheckURLs.py
 - 結果が同じディレクトリにresult.csvで出力される（sample_result.csv参考）
+
+## 仮想環境
+python3 -m venv checkurl_env
+source checkurl_env/bin/activate
+pip3 install -r requirements.txt
