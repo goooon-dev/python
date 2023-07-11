@@ -7,7 +7,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
 
 
 def get_status_code(url):
@@ -28,19 +27,25 @@ def get_title(driver):
 def get_final_url(url, driver):
     driver.get(url)
     WebDriverWait(driver, 30).until(EC.presence_of_all_elements_located)
-    time.sleep(5) 
+    time.sleep(2) 
     return driver.current_url
 
 
 def main():
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
     webdriver_path = './chromedriver'
-    driver = webdriver.Chrome(service=webdriver.ChromeService(webdriver_path), options=Options())
+    driver = webdriver.Chrome(service=webdriver.chrome.service.Service(webdriver_path), options=chrome_options)
 
     with open('output.csv', 'w', newline='', encoding='utf-8') as f, open('urls.txt', 'r') as url_file:
         writer = csv.writer(f)
         writer.writerow(["URL", "リダイレクト", "404", "リダイレクトURL", "リダイレクトタイトル", "ステータスコード", "PDF", "不要"])
         
-        for url in tqdm(map(str.strip, url_file)):
+        # プログレスバーの設定
+        url_list = list(map(str.strip, url_file))
+        progress_bar = tqdm(url_list, unit="URL", ncols=80)
+
+        for url in progress_bar:
             try:
                 final_url = get_final_url(url, driver)
                 status_code = get_status_code(final_url)
