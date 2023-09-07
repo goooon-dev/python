@@ -161,7 +161,6 @@ cython_debug/
 #.idea/
 
 urls.txt
-result*.csv
-output*.csv
+*.csv
 checkurl_env/
 chromedriver

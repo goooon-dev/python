@@ -2,6 +2,8 @@ import csv
 import time
 from tqdm import tqdm
 import requests
+import os
+from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
@@ -32,9 +34,10 @@ def get_final_url(url, driver):
 
 
 def main():
+    load_dotenv()
     chrome_options = Options()
     chrome_options.add_argument("--headless")
-    webdriver_path = './chromedriver'
+    webdriver_path = os.environ['CHROME_DRIVER_PATH']
     driver = webdriver.Chrome(service=webdriver.chrome.service.Service(webdriver_path), options=chrome_options)
 
     with open('output.csv', 'w', newline='', encoding='utf-8') as f, open('urls.txt', 'r') as url_file:
